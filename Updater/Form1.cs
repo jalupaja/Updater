@@ -19,8 +19,8 @@ namespace Updater
 
         public Form1()
         {
-            try
-            {
+            //try
+            //{
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 request.Method = "HEAD";
                 HttpWebResponse response = request.GetResponse() as HttpWebResponse;
@@ -29,11 +29,11 @@ namespace Updater
                 {
                     throw new Exception("Invalid URL!");
                 }
-            }
-            catch (Exception)
-            {
-                throw new Exception("No Internet Connection!");
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    throw new Exception("No Internet Connection!");
+            //}
 
             InitializeComponent();
         }

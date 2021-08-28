@@ -54,7 +54,7 @@ namespace Updater
             }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(updater);
+            //!!! Application.Run(updater);
         }
     }
 }
