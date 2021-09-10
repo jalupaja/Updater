@@ -1,5 +1,5 @@
 # Updater
-Source: https://github.com/jalupaja/Updater
+
  
 # Features:
 - silent install mode
@@ -27,3 +27,6 @@ start Updater.exe, download dumbManager, ask the user if he wants to update and 
 start Updater.exe, download dumbManager quietly to C:\Users\ and excludes ".ini" and ".conf" Extensions:
 `Updater.exe "https://github.com/jalupaja/dumbManager/releases/latest/download/dumbManager.zip" EXCLUDE:ini,conf silent "C:\Users\"`
 
+
+# Source: 
+https://github.com/jalupaja/Updater
