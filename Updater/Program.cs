@@ -9,13 +9,18 @@ namespace Updater
 {
     static class Program
     {
+        static Form1 updater = null;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            var updater = new Form1();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            updater = new Form1();
+            updater.destinationPath = Path.GetDirectoryName(Application.ExecutablePath);
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
@@ -23,26 +28,18 @@ namespace Updater
 
                 foreach (string cmd in args)
                 {
-                    if (cmd == updater.url)
-                    {
-
-                    }
+                    if (cmd == updater.url) { }
                     else if (cmd == "silent")
-                    {
                         updater.silent = true;
-                    }
+                    else if (cmd == "question")
+                        updater.question = true;
+                    else if (cmd.Contains("EXCLUDE:"))
+                        updater.excludeExt = cmd.Replace("EXCLUDE:", "").Split(',');
                     else
                     {
                         try
                         {
-                            if (Directory.Exists(cmd))
-                            {
-                                updater.destinationPath = cmd;
-                            }
-                            else
-                            {
-                                throw new DirectoryNotFoundException();
-                            }
+                            if (Directory.Exists(cmd)) { updater.destinationPath = cmd; }
                         }
                         catch (Exception)
                         {
@@ -50,11 +47,8 @@ namespace Updater
                         }
                     }
                 }
-
+                Application.Run(updater);
             }
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            //!!! Application.Run(updater);
         }
     }
 }
