@@ -24,6 +24,7 @@ namespace Updater
         private string filename;
         private string tmpFolder;
         private bool close;
+        private bool dellingRn;
 
         protected override void SetVisibleCore(bool value)
         {
@@ -51,7 +52,7 @@ namespace Updater
                 else
                     e.Cancel = true;
             }
-            this.Close();
+            //this.Close();
             base.OnFormClosing(e);
         }
 
@@ -124,6 +125,7 @@ namespace Updater
         private void mvFolder(string origin, string to)
         {
             //try if process is open
+            dellingRn = false;
             foreach (string file in Directory.GetFiles(origin))
             {
                 if (File.Exists(Path.Combine(to, Path.GetFileName(file))))
@@ -148,6 +150,8 @@ namespace Updater
                                 }
                             }
                         }
+                        var x =Path.GetFileName(file);
+                        var y = Path.GetFileName(Application.ExecutablePath);
                         if (Path.GetFileName(file) == Path.GetFileName(Application.ExecutablePath))
                             good = false;
 
@@ -162,34 +166,33 @@ namespace Updater
                     mvFolder(folder, Path.Combine(to, new DirectoryInfo(folder).Name));
             }
             //actually replace files
-            
+            dellingRn = true;
             foreach (string file in Directory.GetFiles(origin))
             {
+                bool good = true;
                 if (File.Exists(Path.Combine(to, Path.GetFileName(file))))
                 {
+                    if (file.Contains(".") && excludeExt != null)
+                    {
+                        for (int i = 0; i < excludeExt.Length; i++)
+                        {
+                            if (file.Substring(file.LastIndexOf('.') + 1).ToLower() == excludeExt[i])
+                            {
+                                good = false;
+                            }
+                        }
+                    }
+                    if (Path.GetFileName(file) == Path.GetFileName(Application.ExecutablePath))
+                        good = false;
                     try
                     {
-                        File.Delete(Path.Combine(to, Path.GetFileName(file)));
+                        if (good) { File.Delete(Path.Combine(to, Path.GetFileName(file))); }
                     }
                     catch (Exception)
                     {
                         wait4Proc(to, file);
                     }
                 }
-                bool good = true;
-                if (file.Contains(".") && excludeExt != null)
-                {
-                    for (int i = 0; i < excludeExt.Length; i++)
-                    {
-                        if (file.Substring(file.LastIndexOf('.') + 1).ToLower() == excludeExt[i])
-                        {
-                            good = false;
-                        }
-                    }
-                }
-                if (Path.GetFileName(file) == Path.GetFileName(Application.ExecutablePath))
-                    good = false;
-
                 if (good) { File.Move(file, Path.Combine(to, Path.GetFileName(file))); }
             }
             ProgBar.Increment(1);
@@ -248,6 +251,7 @@ namespace Updater
                     }
                 }
             }
+            if (dellingRn) { File.Delete(Path.Combine(to, Path.GetFileName(file))); }
         }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
